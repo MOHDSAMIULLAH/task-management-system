@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
+import api from '../../lib/api';
 import Toast from '../../components/Toast';
 
 export default function RegisterPage() {
@@ -21,10 +21,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
-        formData
-      );
+      await api.post('/auth/register', formData);
       
       setToast({ message: 'Registration successful! Redirecting to login...', type: 'success' });
       setTimeout(() => router.push('/login'), 2000);

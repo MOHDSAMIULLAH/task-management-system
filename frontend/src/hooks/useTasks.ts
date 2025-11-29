@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../lib/api';
-import { Task, PaginatedTasks } from '../types';
+import { Task, PaginatedResponse } from '../types';
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -26,7 +26,7 @@ export const useTasks = () => {
         ...(filters.search && { search: filters.search }),
       });
 
-      const response = await api.get<PaginatedTasks>(`/tasks?${params}`);
+      const response = await api.get<PaginatedResponse<Task>>(`/tasks?${params}`);
       setTasks(response.data.data);
       setPagination(response.data.pagination);
     } catch (error) {
@@ -63,6 +63,11 @@ export const useTasks = () => {
     return response.data;
   };
 
+  const getTaskById = async (id: string) => {
+    const response = await api.get<Task>(`/tasks/${id}`);
+    return response.data;
+  };
+
   return {
     tasks,
     loading,
@@ -74,5 +79,6 @@ export const useTasks = () => {
     updateTask,
     deleteTask,
     toggleTaskStatus,
+    getTaskById,
   };
 };

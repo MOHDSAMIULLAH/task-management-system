@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
+import api from '../../lib/api';
 import { setTokens } from '../../lib/auth';
 import Toast from '../../components/Toast';
 
@@ -18,10 +18,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-        formData
-      );
+      const response = await api.post('/auth/login', formData);
       
       const { accessToken, refreshToken } = response.data;
       setTokens(accessToken, refreshToken);
