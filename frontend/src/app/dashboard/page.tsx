@@ -1,101 +1,92 @@
-'use client';
+"use client"
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { isAuthenticated, clearTokens } from '../../lib/auth';
-import { useTasks } from '../../hooks/useTasks';
-import TaskList from '../../components/TaskList';
-import TaskForm from '../../components/TaskForm';
-import Toast from '../../components/Toast';
-import { Task } from '../../types';
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { isAuthenticated, clearTokens } from "../../lib/auth"
+import { useTasks } from "../../hooks/useTasks"
+import TaskList from "../../components/TaskList"
+import TaskForm from "../../components/TaskForm"
+import Toast from "../../components/Toast"
+import type { Task } from "../../types"
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const [showForm, setShowForm] = useState(false);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  
-  const {
-    tasks,
-    loading,
-    filters,
-    setFilters,
-    createTask,
-    updateTask,
-    deleteTask,
-    toggleTaskStatus,
-  } = useTasks();
+  const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+  const [authenticated, setAuthenticated] = useState(false)
+  const [showForm, setShowForm] = useState(false)
+  const [editingTask, setEditingTask] = useState<Task | null>(null)
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null)
+
+  const { tasks, loading, filters, setFilters, createTask, updateTask, deleteTask, toggleTaskStatus } = useTasks()
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/login');
+    setMounted(true)
+    const checkAuth = isAuthenticated()
+    setAuthenticated(checkAuth)
+
+    if (!checkAuth) {
+      router.push("/login")
     }
-  }, [router]);
+  }, [router])
 
   const handleLogout = () => {
-    clearTokens();
-    router.push('/login');
-  };
+    clearTokens()
+    router.push("/login")
+  }
 
   const handleCreateOrUpdate = async (data: Partial<Task>) => {
     try {
       if (editingTask) {
-        await updateTask(editingTask.id, data);
-        setToast({ message: 'Task updated successfully!', type: 'success' });
+        await updateTask(editingTask.id, data)
+        setToast({ message: "Task updated successfully!", type: "success" })
       } else {
-        await createTask(data);
-        setToast({ message: 'Task created successfully!', type: 'success' });
+        await createTask(data)
+        setToast({ message: "Task created successfully!", type: "success" })
       }
-      setShowForm(false);
-      setEditingTask(null);
+      setShowForm(false)
+      setEditingTask(null)
     } catch (error) {
-      setToast({ message: 'Operation failed', type: 'error' });
+      setToast({ message: "Operation failed", type: "error" })
     }
-  };
+  }
 
   const handleEdit = (task: Task) => {
-    setEditingTask(task);
-    setShowForm(true);
-  };
+    setEditingTask(task)
+    setShowForm(true)
+  }
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this task?')) {
+    if (confirm("Are you sure you want to delete this task?")) {
       try {
-        await deleteTask(id);
-        setToast({ message: 'Task deleted successfully!', type: 'success' });
+        await deleteTask(id)
+        setToast({ message: "Task deleted successfully!", type: "success" })
       } catch (error) {
-        setToast({ message: 'Failed to delete task', type: 'error' });
+        setToast({ message: "Failed to delete task", type: "error" })
       }
     }
-  };
+  }
 
   const handleToggle = async (id: string) => {
     try {
-      await toggleTaskStatus(id);
-      setToast({ message: 'Task status updated!', type: 'success' });
+      await toggleTaskStatus(id)
+      setToast({ message: "Task status updated!", type: "success" })
     } catch (error) {
-      setToast({ message: 'Failed to update status', type: 'error' });
+      setToast({ message: "Failed to update status", type: "error" })
     }
-  };
+  }
 
   const handleCancel = () => {
-    setShowForm(false);
-    setEditingTask(null);
-  };
+    setShowForm(false)
+    setEditingTask(null)
+  }
 
-  if (!isAuthenticated()) {
-    return null;
+  if (!mounted || !authenticated) {
+    return null
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -117,26 +108,20 @@ export default function DashboardPage() {
             onClick={() => setShowForm(!showForm)}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            {showForm ? 'Cancel' : '+ New Task'}
+            {showForm ? "Cancel" : "+ New Task"}
           </button>
         </div>
 
         {showForm && (
           <div className="mb-6">
-            <TaskForm
-              task={editingTask}
-              onSubmit={handleCreateOrUpdate}
-              onCancel={handleCancel}
-            />
+            <TaskForm task={editingTask} onSubmit={handleCreateOrUpdate} onCancel={handleCancel} />
           </div>
         )}
 
         <div className="mb-6 bg-white p-4 rounded-lg shadow">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Filter by Status
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
               <select
                 value={filters.status}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -150,9 +135,7 @@ export default function DashboardPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Search by Title
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Search by Title</label>
               <input
                 type="text"
                 value={filters.search}
@@ -164,14 +147,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <TaskList
-          tasks={tasks}
-          loading={loading}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onToggle={handleToggle}
-        />
+        <TaskList tasks={tasks} loading={loading} onEdit={handleEdit} onDelete={handleDelete} onToggle={handleToggle} />
       </main>
     </div>
-  );
+  )
 }
