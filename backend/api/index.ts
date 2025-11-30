@@ -10,8 +10,16 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:3000', 'https://task-management-system-gv4m.vercel.app'];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
