@@ -1,4 +1,3 @@
-import { TaskStatus } from '@prisma/client';
 import prisma from '../config/database';
 import { PaginationParams, PaginatedResponse } from '../types';
 
@@ -13,7 +12,7 @@ export class TaskService {
     const where: any = { userId };
 
     if (status && status !== 'ALL') {
-      where.status = status as TaskStatus;
+      where.status = status;
     }
 
     if (search) {
