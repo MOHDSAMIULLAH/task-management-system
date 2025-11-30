@@ -17,7 +17,9 @@ export default function DashboardPage() {
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null)
 
-  const { tasks, loading, filters, setFilters, createTask, updateTask, deleteTask, toggleTaskStatus } = useTasks()
+  const { tasks, loading, pagination, filters, setFilters, setPage, createTask, updateTask, deleteTask, toggleTaskStatus } = useTasks()
+
+  console.log("pagination:", pagination)
 
   useEffect(() => {
     setMounted(true)
@@ -147,7 +149,15 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <TaskList tasks={tasks} loading={loading} onEdit={handleEdit} onDelete={handleDelete} onToggle={handleToggle} />
+        <TaskList 
+          tasks={tasks} 
+          loading={loading} 
+          onEdit={handleEdit} 
+          onDelete={handleDelete} 
+          onToggle={handleToggle}
+          pagination={pagination}
+          onPageChange={setPage}
+        />
       </main>
     </div>
   )

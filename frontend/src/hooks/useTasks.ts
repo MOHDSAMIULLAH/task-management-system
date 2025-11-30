@@ -41,11 +41,11 @@ export const useTasks = () => {
     } finally {
       setLoading(false)
     }
-  }, [pagination.page, pagination.limit, filters])
+  }, [pagination.page, pagination.limit, filters.status, filters.search])
 
   useEffect(() => {
     fetchTasks()
-  }, [fetchTasks])
+  }, [pagination.page, pagination.limit, filters.status, filters.search])
 
   const createTask = async (data: Partial<Task>) => {
     const response = await api.post<Task>("/tasks", data)
@@ -75,12 +75,22 @@ export const useTasks = () => {
     return response.data
   }
 
+  const setPage = (page: number) => {
+    setPagination((prev) => ({ ...prev, page }))
+  }
+
+  const setLimit = (limit: number) => {
+    setPagination((prev) => ({ ...prev, limit, page: 1 }))
+  }
+
   return {
     tasks,
     loading,
     pagination,
     filters,
     setFilters,
+    setPage,
+    setLimit,
     fetchTasks,
     createTask,
     updateTask,
