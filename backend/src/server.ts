@@ -24,7 +24,7 @@ app.use('/api/tasks', taskRoutes);
 app.use(errorHandler);
 
 app.get('/', (req, res) => {
-  res.send('Server is running 🚀');
+  res.send('Server is running at port ' + PORT);
 });
 
 app.listen(PORT, () => {
