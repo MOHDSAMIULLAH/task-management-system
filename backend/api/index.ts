@@ -10,35 +10,28 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
-  'https://task-management-system-gv4m.vercel.app'
-];
-
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.some(allowed => origin.includes(allowed.replace('https://', '').replace('http://', '')))) {
-      callback(null, true);
-    } else {
-      callback(null, true); // Allow all for now
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-  exposedHeaders: ['Set-Cookie']
-}));
-
-// Handle preflight requests
-app.options('*', (req, res) => {
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.some(allowed => origin.includes(allowed.replace('https://', '').replace('http://', '')))) {
-    res.header('Access-Control-Allow-Origin', origin);
+// Manual CORS middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin || '';
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://task-management-system-gv4m.vercel.app'
+  ];
+  
+  if (allowedOrigins.some(allowed => origin.includes(allowed.replace('https://', '').replace('http://', '')))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.status(200).send();
+  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
+  res.setHeader('Access-Control-Expose-Headers', 'Set-Cookie');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
 });
 
 app.use(express.json());
