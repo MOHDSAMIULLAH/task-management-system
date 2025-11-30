@@ -17,7 +17,6 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   'http://localhost:3000',
   'https://task-management-system-gv4m.vercel.app',
-  'https://task-management-system-gv4m-h7q0mluzq-mohdsamiullahs-projects.vercel.app'
 ];
 
 app.use(
