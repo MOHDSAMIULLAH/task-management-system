@@ -15,7 +15,6 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000',
   'https://task-management-system-gv4m.vercel.app',
-  'https://task-management-system-gv4m-h7q0mluzq-mohdsamiullahs-projects.vercel.app'
 ];
 
 app.use(
