@@ -23,6 +23,10 @@ app.use('/api/tasks', taskRoutes);
 
 app.use(errorHandler);
 
+app.get('/', (req, res) => {
+  res.send('Server is running 🚀');
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
