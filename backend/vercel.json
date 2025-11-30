@@ -12,7 +12,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "value": "https://task-management-system-gv4m.vercel.app"
         },
         {
           "key": "Access-Control-Allow-Methods",
